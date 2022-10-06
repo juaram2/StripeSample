@@ -23,24 +23,10 @@ class MainVM(): ViewModel() {
     private val authsApi = ApiClients.identityApiClient.createService(AuthsApi::class.java)
     private val accountApi = ApiClients.identityApiClient.createService(AccountsApi::class.java)
     private val profilesApi = ApiClients.apiClient.createService(ProfilesApi::class.java)
-    private val accountsApi = ApiClients.identityApiClient.createService(AccountsApi::class.java)
-    private val externalLoginsApi = ApiClients.identityApiClient.createService(ExternalLoginsApi::class.java)
-
-    var email = MutableLiveData<String?>()
-    val password = MutableLiveData<String?>()
-    val confirmPassword = MutableLiveData<String?>()
-    val code = MutableLiveData<String?>()
-
-    private val _startGoogleSigninActivity = MutableLiveData<Boolean>()
-    val startGoogleSigninActivity: LiveData<Boolean>
-        get() = _startGoogleSigninActivity
 
     private var _signedIn = MutableLiveData<Boolean>(false)
     val signedIn: LiveData<Boolean>
         get() = _signedIn
-
-    private val _externalLoginInfos = MutableLiveData<ExternalLogins?>()
-    val externalLoginInfos: LiveData<ExternalLogins?> = _externalLoginInfos
 
     private val handler = Handler()
 
@@ -133,7 +119,6 @@ class MainVM(): ViewModel() {
     fun onClickSignin() {
         val actionName = "signInWithEmail"
         Log.d("debug","$actionName started")
-        Log.d("debug", "${email.value.toString()} ${password.value.toString()}")
         _loading.value = true
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -142,13 +127,12 @@ class MainVM(): ViewModel() {
                 "CloudHospitalSecret",
                 "openid email profile roles CloudHospital_api IdentityServerApi offline_access",
                 "password",
-                email.value.toString(),
-                password.value.toString()
+                "aram.test002@gmail.com",
+                ""
             )
-            Log.e("Debug", "response : $response")
             try {
                 _loading.value = false
-                Log.e("Debug", "responseTry : $response")
+                Log.d("debug", "responseTry : $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         PrefUtil.cacheIdentityToken(
@@ -160,8 +144,7 @@ class MainVM(): ViewModel() {
                                 it.scope
                             )
                         )
-                        Log.e("Debug", "IdentityToken : "+response.body().toString())
-                        Log.d("debug", "$actionName: ${response.body()}")
+                        Log.d("debug", "$actionName Success")
                         _signedIn.postValue(true)
                     }
                 }
