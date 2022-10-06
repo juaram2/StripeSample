@@ -2,19 +2,17 @@ package com.example.stripesample.viewmodel
 
 import CloudHospitalApi.apis.ProfilesApi
 import CloudHospitalApi.models.UserModel
-import android.accounts.Account
 import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stripesample.model.ExternalLogins
+import com.example.stripesample.model.Account
 import com.example.stripesample.model.IdentityToken
 import com.example.stripesample.service.AccountsApi
 import com.example.stripesample.service.ApiClients
 import com.example.stripesample.service.AuthsApi
-import com.example.stripesample.service.ExternalLoginsApi
 import com.example.stripesample.utils.PrefUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,18 +32,16 @@ class MainVM(): ViewModel() {
     val loading: LiveData<Boolean> = _loading
 
     private val _account = MutableLiveData<Account?>(null)
-    val account: LiveData<Account?> = _account
 
     private val _profile = MutableLiveData<UserModel?>(null)
     val profile: LiveData<UserModel?> = _profile
 
     private val _signInChecked = MutableLiveData<Boolean?>()
-    val signInChecked: LiveData<Boolean?> = _signInChecked
 
     fun checkIdentityToken() {
         val identityToken = PrefUtil.getCachedIdentityToken()
 
-        Log.d("debug", "update identityToken: $identityToken")
+        Log.d("debug", "update identityToken")
 
         if (identityToken != null) {
             getUserAccount()
@@ -128,7 +124,7 @@ class MainVM(): ViewModel() {
                 "openid email profile roles CloudHospital_api IdentityServerApi offline_access",
                 "password",
                 "aram.test002@gmail.com",
-                ""
+                "StripeTest1"
             )
             try {
                 _loading.value = false

@@ -36,7 +36,7 @@ class TokenAuthenticator: Authenticator {
 
     private fun getUpdatedHeader(token: String): String? {
         val authsApi = ApiClients.identityApiClient.createService(serviceClass = AuthsApi::class.java)
-        var response = authsApi.refreshToken("com.cloudhospital.int", "CloudHospitalSecret", "refresh_token", token).execute()
+        val response = authsApi.refreshToken("com.cloudhospital.int", "CloudHospitalSecret", "refresh_token", token).execute()
 
         response.body()?.let {
             PrefUtil.cacheIdentityToken(IdentityToken(it.access_token, it.expires_in, it.token_type, it.refresh_token, it.scope))
@@ -46,9 +46,9 @@ class TokenAuthenticator: Authenticator {
 
             accessToken.let { accessToken ->
                 tokenType.let { tokenType ->
-                    val trimedToken = accessToken?.replace("\n", "")?.replace("\r", "")
+                    val trimmedToken = accessToken?.replace("\n", "")?.replace("\r", "")
 
-                    return "$tokenType $trimedToken"
+                    return "$tokenType $trimmedToken"
                 }
             }
         }

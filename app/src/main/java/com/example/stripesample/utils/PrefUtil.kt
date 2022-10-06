@@ -1,25 +1,23 @@
 package com.example.stripesample.utils
 
 import android.content.Context
-import android.text.TextUtils
-import android.util.Log
+import com.example.stripesample.BuildConfig
 import com.example.stripesample.model.IdentityToken
 import com.pddstudio.preferences.encrypted.EncryptedPreferences
 import java.time.LocalDateTime
-import java.time.chrono.ChronoLocalDateTime
 
 
 object PrefUtil {
 
-    var ACCESS_TOKEN = "ACCESS_TOKEN-dev"
-    var REFRESH_TOKEN = "REFRESH_TOKEN-dev"
-    var TOKEN_TYPE = "TOKEN_TYPE-dev"
-    var EXPIRES_AT = "EXPIRES_AT-dev"
+    private var ACCESS_TOKEN = "ACCESS_TOKEN-${BuildConfig.FLAVOR}"
+    var REFRESH_TOKEN = "REFRESH_TOKEN-${BuildConfig.FLAVOR}"
+    var TOKEN_TYPE = "TOKEN_TYPE-${BuildConfig.FLAVOR}"
+    var EXPIRES_AT = "EXPIRES_AT-${BuildConfig.FLAVOR}"
 
     private lateinit var prefs: EncryptedPreferences
 
     fun init(context: Context) {
-        prefs = EncryptedPreferences.Builder(context).withEncryptionPassword("cloudhospital.dev").build()
+        prefs = EncryptedPreferences.Builder(context).withEncryptionPassword("cloudhospital.${BuildConfig.FLAVOR}").build()
     }
 
     fun cacheIdentityToken(identityToken: IdentityToken) {
@@ -30,28 +28,17 @@ object PrefUtil {
     }
 
     fun getCachedIdentityToken(): IdentityToken? {
-        var identityToken = IdentityToken(
+        val identityToken = IdentityToken(
             access_token = access_token,
             token_type = token_type,
             refresh_token =  refresh_token
         )
 
-        if (identityToken.access_token != "") {
-            return identityToken
+        return if (identityToken.access_token != "") {
+            identityToken
         } else {
-            return null
+            null
         }
-    }
-
-    fun getCachedAccessToken(): String {
-        return access_token
-    }
-
-    fun checkIfTokenExpired(): Boolean {
-        Log.d("debug","expires_at :: ${expires_at}")
-        return if(TextUtils.isEmpty(expires_at)) true
-        else LocalDateTime.parse(expires_at).isBefore(ChronoLocalDateTime.from((LocalDateTime.now())))
-        //return LocalDate.parse(expires_at).isAfter(ChronoLocalDate.from(now()))
     }
 
     fun clearIdentityToken() {
